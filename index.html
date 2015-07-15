@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.barAddRETD_MID, .legendAddRETD_MID {
+  fill: #1696d2;
+  opacity: .6;
+}
+.barAddHS, .legendAddHS{
+  fill: #fcb918;
+  opacity: .6;
+}
+
+.axis, .xText, .legendTextAddRETD_MID, .legendTextAddHS{
+  font: 12px Lato;
+}
+
+.axis path{
+  display: none;
+}
+.x.axis line{
+  display: none;
+}
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+
+#chartText{
+  font: 16px Lato;
+  height: 180px;
+  position: relative;
+  /* right: 0; */
+  z-index: 2;
+  bottom: -250px;
+  left: 32%;
+  /* display: inline; */
+  width: 350px;
+}
+.button{
+  color: #ffffff;
+  background-color: #00a6d2;
+  display: inline-block;
+  width: 50px;
+  margin-top: 145px;
+  padding: 3px;
+  cursor: pointer;
+  font: 14px Lato;
+  font-weight: 900;
+  float:left;
+  text-align: center;
+  border: 1px solid #fff;
+  cursor: pointer;
+}
+.greyed, .greyed:hover{
+  color: #cccccc;
+  background-color: #e6e6e6;
+  background-color: grey;
+  pointer-events: none;
+  cursor: default;
+}
+.button:hover{
+  background-color: #FDBF11;
+  color: #fff;
+}
+#stepCount{
+  display: none;
+}
+.stepText{
+  position: absolute;
+  opacity: 0;
+}
+</style>
+<body>
+
+<div id = "chart">
+  <div id = "chartText">
+  <p class = "stepText one">This graph shows the dollar increase in income bracket cutoffs, when housing subsidies are added in. The income cutoffs on the lower portion of the distribution rise, while the cutoffs in higher percentiles remain stable. Housing subsidies reduce inequality.</p>
+  <p class = "stepText two">Adding in the mortgage interest and real estate tax deductions appears to dramatically increase inequality, however it is misleading to look at dollar differences in income cutoffs...</p>
+  <p class = "stepText three">When we look at dollar differences as a percentage of income cutoffs, we see that the mortgage interest and real estate tax deductions only slightly increase inequality.</p>
+  <div class = "button prev greyed"><</div>
+  <div class = "button next">></div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script>
+d3.select(".stepText.one").style("opacity",1)
+var stepCount = 1;
+var margin = {top: 30, right: 20, bottom: 60, left: 60},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10, "$,");
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("rect")
+  .attr("x",100)
+  .attr("y",0)
+  .attr("width", 15)
+  .attr("height", 15)
+  .attr("class", "legendAddHS");
+svg.append("text")
+  .attr("class", "legendTextAddHS")
+  .attr("x", 125)
+  .attr("y", 12)
+  .text("Adding housing subsidies")
+
+svg.append("rect")
+  .attr("x",300)
+  .attr("y",0)
+  .attr("width", 15)
+  .attr("height", 15)
+  .attr("class", "legendAddRETD_MID");
+
+svg.append("text")
+  .attr("class", "legendTextAddRETD_MID")
+  .attr("x", 325)
+  .attr("y", 12)
+  .text("Adding housing subsidies, the mortgage interest deduction, and real estate tax deduction")
+
+d3.csv("data/data.csv", function(error, data) {
+  if (error) throw error;
+
+  x.domain(data.map(function(d) { return d.percentile; }));
+  y.domain([0, 1940]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "yText")
+      .attr("y", 6)
+      .attr("dy", "-2em")
+      .attr("dx", "-4em")
+      .text("Dollar difference");
+
+  svg.append("text")
+    .attr("class", "xText")
+    .attr("y", 450)
+    .attr("x", 420)
+    .text("Percentile")
+
+  svg.selectAll(".barAddHS")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "barAddHS")
+      .attr("x", function(d) { return x(d.percentile); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.dollars_add_hs); })
+      .attr("height", function(d) { return height - y(d.dollars_add_hs); });
+  
+  svg.selectAll(".barAddRETD_MID")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "barAddRETD_MID")
+      .attr("x", function(d) { return x(d.percentile); })
+      .attr("width", x.rangeBand())
+      .attr("y", height)
+      .attr("height", 0);
+
+  function dollarDisplay(){
+    d3.select(".yText")
+    .text("Dollar difference");  
+  }
+  function percentDisplay(){
+    d3.select(".yText")
+    .text("Percent difference");  
+  }
+  d3.selectAll(".button").on("click", function(){
+    var next = d3.select(this).classed("next")
+    var prev = d3.select(this).classed("prev")
+    function greyPrev(){
+      d3.select(".button.prev").classed("greyed", true); d3.select(".button.next").classed("greyed", false)
+    }
+    function greyNext(){
+      d3.select(".button.prev").classed("greyed", false); d3.select(".button.next").classed("greyed", true)
+    }
+    function greyNone(){
+      d3.selectAll(".button").classed("greyed", false)
+    }
+
+    if(stepCount == 1 && next){
+      d3.select(".stepText.one").transition().style("opacity",0)
+      d3.select(".stepText.two").transition().style("opacity",1)
+      d3.select(".stepText.three").transition().style("opacity",0)
+      d3.selectAll(".barAddRETD_MID").transition()
+        .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+        .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
+      stepCount += 1;
+      greyNone();
+    }
+    else if(stepCount == 2 && prev){
+      d3.select(".stepText.one").transition().style("opacity",1)
+      d3.select(".stepText.two").transition().style("opacity",0)
+      d3.select(".stepText.three").transition().style("opacity",0)
+      d3.selectAll(".barAddRETD_MID").transition()
+        .attr("y", height)
+        .attr("height", 0);
+      stepCount -= 1;      
+      greyPrev();
+    }
+
+    else if(stepCount == 2 && next){
+      d3.select(".stepText.one").transition().style("opacity",0)
+      d3.select(".stepText.two").transition().style("opacity",0)
+      d3.select(".stepText.three").transition().style("opacity",1)
+      yAxis.ticks(10, "%");
+      y.domain([0,.1])
+       svg.select(".y.axis").transition().duration(700).call(yAxis);
+      d3.selectAll(".barAddRETD_MID").transition()
+        .attr("y", function(d) { return y(d.percent_add_hs_add_retd_mid); })
+        .attr("height", function(d) { return height - y(d.percent_add_hs_add_retd_mid); });
+
+      d3.selectAll(".barAddHS").transition()
+        .attr("y", function(d) { return y(d.percent_add_hs); })
+        .attr("height", function(d) { return height - y(d.percent_add_hs); });
+      stepCount += 1;    
+      greyNext();
+      percentDisplay();
+    }
+    else if(stepCount == 3 && prev){
+      d3.select(".stepText.one").transition().style("opacity",0)
+      d3.select(".stepText.two").transition().style("opacity",1)
+      d3.select(".stepText.three").transition().style("opacity",0)
+      yAxis.ticks(10, "$,");
+      y.domain([0,1940])
+      svg.select(".y.axis").transition().duration(700).call(yAxis);
+
+      d3.selectAll(".barAddRETD_MID").transition()
+        .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+        .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
+
+      d3.selectAll(".barAddHS").transition()
+        .attr("y", function(d) { return y(d.dollars_add_hs); })
+        .attr("height", function(d) { return height - y(d.dollars_add_hs); });
+      stepCount -= 1;    
+      greyNone();
+      dollarDisplay();
+    }
+  })
+});
+
+
+</script>
