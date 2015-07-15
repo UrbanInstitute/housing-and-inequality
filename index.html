@@ -2,17 +2,34 @@
 <meta charset="utf-8">
 <style>
 
+#chart{
+  max-width: 950px;
+  width: 100%;
+}
 .barAddRETD_MID, .legendAddRETD_MID {
   fill: #1696d2;
-  opacity: .6;
+  opacity: .4;
 }
 .barAddHS, .legendAddHS{
   fill: #fcb918;
-  opacity: .6;
+  opacity: .4;
 }
 
 .axis, .xText, .legendTextAddRETD_MID, .legendTextAddHS{
-  font: 12px Lato;
+  font: 14px Lato;
+/*      -webkit-filter: drop-shadow(4px 4px 6px #ccc);
+    -moz-filter: drop-shadow(4px 4px 6px #ccc);
+    filter: drop-shadow(4px 4px 6px #ccc);*/
+}
+/*.legendTextAddRETD_MID, .legendTextAddHS{
+  fill: #333;
+}*/
+.legendTextAddRETD_MID.shadow, .legendTextAddHS.shadow{
+  fill: #000;
+}
+.xText, .yT
+.xText, .yText{
+  font-style: italic;
 }
 
 .axis path{
@@ -39,7 +56,7 @@
   /* right: 0; */
   z-index: 2;
   bottom: -250px;
-  left: 32%;
+  left: 52%;
   /* display: inline; */
   width: 350px;
 }
@@ -90,184 +107,252 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
-d3.select(".stepText.one").style("opacity",1)
-var stepCount = 1;
-var margin = {top: 30, right: 20, bottom: 60, left: 60},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+function greyPrev(){
+    d3.select(".button.prev").classed("greyed", true); d3.select(".button.next").classed("greyed", false)
+}
+function greyNext(){
+  d3.select(".button.prev").classed("greyed", false); d3.select(".button.next").classed("greyed", true)
+}
+function greyNone(){
+  d3.selectAll(".button").classed("greyed", false)
+}
+function dollarDisplay(){
+  d3.select(".yText")
+  .text("Dollar difference");  
+}
+function percentDisplay(){
+  d3.select(".yText")
+  .text("Percent difference");  
+}
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+function drawGraphic(){
+  d3.select(".stepText.one").style("opacity",1);
+  d3.select(".stepText.two").style("opacity",0);
+  d3.select(".stepText.three").style("opacity",0);
+  greyPrev();
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
+  d3.select("#chart svg").remove();
+  var stepCount = 1;
+  var margin = {top: 40, right: 20, bottom: 80, left: 60};
+  var width = d3.select("#chart").node().getBoundingClientRect().width - margin.left - margin.right;
+  var height = width * .4;
+      // width = 960 - margin.left - margin.right,
+      // height = 500 - margin.top - margin.bottom;
 
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .ticks(10, "$,");
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .02);
 
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var y = d3.scale.linear()
+      .range([height, 0]);
 
-svg.append("rect")
-  .attr("x",100)
-  .attr("y",0)
-  .attr("width", 15)
-  .attr("height", 15)
-  .attr("class", "legendAddHS");
-svg.append("text")
-  .attr("class", "legendTextAddHS")
-  .attr("x", 125)
-  .attr("y", 12)
-  .text("Adding housing subsidies")
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
 
-svg.append("rect")
-  .attr("x",300)
-  .attr("y",0)
-  .attr("width", 15)
-  .attr("height", 15)
-  .attr("class", "legendAddRETD_MID");
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(10, "$,");
 
-svg.append("text")
-  .attr("class", "legendTextAddRETD_MID")
-  .attr("x", 325)
-  .attr("y", 12)
-  .text("Adding housing subsidies, the mortgage interest deduction, and real estate tax deduction")
+  var svg = d3.select("#chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  var defs = svg.append("defs");
+  var filter = defs.append("filter")
+        .attr("id", "shadow")
+        .attr("x", "-20%")
+        .attr("y", "-19%")
+        .attr("height", "180%")
+        .attr("width", "180%")
+    filter.append("feGaussianBlur")
+        .attr("stdDeviation", "2 2")
+        .attr("result", "shadow");
+     
+    filter.append("feOffset")
+        .attr("dx", 2)
+        .attr("dy", 2)
 
-d3.csv("data/data.csv", function(error, data) {
-  if (error) throw error;
+  d3.csv("data/data.csv", function(error, data) {
+    if (error) throw error;
 
-  x.domain(data.map(function(d) { return d.percentile; }));
-  y.domain([0, 1940]);
+    x.domain(data.map(function(d) { return d.percentile; }));
+    y.domain([0, 1940]);
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "yText")
-      .attr("y", 6)
-      .attr("dy", "-2em")
-      .attr("dx", "-4em")
-      .text("Dollar difference");
 
-  svg.append("text")
-    .attr("class", "xText")
-    .attr("y", 450)
-    .attr("x", 420)
-    .text("Percentile")
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
-  svg.selectAll(".barAddHS")
-      .data(data)
-    .enter().append("rect")
-      .attr("class", "barAddHS")
-      .attr("x", function(d) { return x(d.percentile); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.dollars_add_hs); })
-      .attr("height", function(d) { return height - y(d.dollars_add_hs); });
-  
-  svg.selectAll(".barAddRETD_MID")
-      .data(data)
-    .enter().append("rect")
-      .attr("class", "barAddRETD_MID")
-      .attr("x", function(d) { return x(d.percentile); })
-      .attr("width", x.rangeBand())
-      .attr("y", height)
-      .attr("height", 0);
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("class", "yText")
+        .attr("y", 6)
+        .attr("dy", "-2em")
+        .attr("dx", "-4em")
+        .text("Dollar difference");
 
-  function dollarDisplay(){
-    d3.select(".yText")
-    .text("Dollar difference");  
-  }
-  function percentDisplay(){
-    d3.select(".yText")
-    .text("Percent difference");  
-  }
-  d3.selectAll(".button").on("click", function(){
-    var next = d3.select(this).classed("next")
-    var prev = d3.select(this).classed("prev")
-    function greyPrev(){
-      d3.select(".button.prev").classed("greyed", true); d3.select(".button.next").classed("greyed", false)
-    }
-    function greyNext(){
-      d3.select(".button.prev").classed("greyed", false); d3.select(".button.next").classed("greyed", true)
-    }
-    function greyNone(){
-      d3.selectAll(".button").classed("greyed", false)
-    }
+    svg.append("text")
+      .attr("class", "xText")
+      .attr("y", 400)
+      .attr("x", 420)
+      .text("Percentile")
 
-    if(stepCount == 1 && next){
-      d3.select(".stepText.one").transition().style("opacity",0)
-      d3.select(".stepText.two").transition().style("opacity",1)
-      d3.select(".stepText.three").transition().style("opacity",0)
-      d3.selectAll(".barAddRETD_MID").transition()
-        .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
-        .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
-      stepCount += 1;
-      greyNone();
-    }
-    else if(stepCount == 2 && prev){
-      d3.select(".stepText.one").transition().style("opacity",1)
-      d3.select(".stepText.two").transition().style("opacity",0)
-      d3.select(".stepText.three").transition().style("opacity",0)
-      d3.selectAll(".barAddRETD_MID").transition()
-        .attr("y", height)
-        .attr("height", 0);
-      stepCount -= 1;      
-      greyPrev();
-    }
-
-    else if(stepCount == 2 && next){
-      d3.select(".stepText.one").transition().style("opacity",0)
-      d3.select(".stepText.two").transition().style("opacity",0)
-      d3.select(".stepText.three").transition().style("opacity",1)
-      yAxis.ticks(10, "%");
-      y.domain([0,.1])
-       svg.select(".y.axis").transition().duration(700).call(yAxis);
-      d3.selectAll(".barAddRETD_MID").transition()
-        .attr("y", function(d) { return y(d.percent_add_hs_add_retd_mid); })
-        .attr("height", function(d) { return height - y(d.percent_add_hs_add_retd_mid); });
-
-      d3.selectAll(".barAddHS").transition()
-        .attr("y", function(d) { return y(d.percent_add_hs); })
-        .attr("height", function(d) { return height - y(d.percent_add_hs); });
-      stepCount += 1;    
-      greyNext();
-      percentDisplay();
-    }
-    else if(stepCount == 3 && prev){
-      d3.select(".stepText.one").transition().style("opacity",0)
-      d3.select(".stepText.two").transition().style("opacity",1)
-      d3.select(".stepText.three").transition().style("opacity",0)
-      yAxis.ticks(10, "$,");
-      y.domain([0,1940])
-      svg.select(".y.axis").transition().duration(700).call(yAxis);
-
-      d3.selectAll(".barAddRETD_MID").transition()
-        .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
-        .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
-
-      d3.selectAll(".barAddHS").transition()
+    svg.selectAll(".barAddHS")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "barAddHS")
+        .attr("x", function(d) { return x(d.percentile); })
+        .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d.dollars_add_hs); })
         .attr("height", function(d) { return height - y(d.dollars_add_hs); });
-      stepCount -= 1;    
-      greyNone();
-      dollarDisplay();
-    }
-  })
-});
+    
+    svg.selectAll(".barAddRETD_MID")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "barAddRETD_MID")
+        .attr("x", function(d) { return x(d.percentile); })
+        .attr("width", x.rangeBand())
+        .attr("y", height)
+        .attr("height", 0);
 
+    // svg.append("text")
+    //   .attr("class", "legendTextAddHS shadow")
+    //   .style("filter", "url(#shadow)")
+    //   .attr("x", x(15)-40)
+    //   .attr("y", y(250))
+    //   .text("Adding housing subsidies")
+    svg.append("text")
+      .attr("class", "legendTextAddHS")
+      .attr("x", x(15)-40)
+      .attr("y", y(250))
+      .text("Adding housing subsidies")
+
+
+
+    // svg.append("text")
+    //   .attr("class", "legendTextAddRETD_MID shadow")
+    //   .style("filter", "url(#shadow)")
+    //   .attr("x", x(70))
+    //   .attr("y", y(-1000))
+    //   .text("Adding housing subsidies")
+    // svg.append("text")
+    //   .attr("class", "legendTextAddRETD_MID shadow lower")
+    //   .style("filter", "url(#shadow)")
+    //   .attr("x", x(75)-20)
+    //   .attr("y", y(-1000))
+    //   .text("and deductions")
+
+    svg.append("text")
+      .attr("class", "legendTextAddRETD_MID")
+      .attr("x", x(70))
+      .attr("y", y(-1000))
+      .text("Adding housing subsidies")
+    svg.append("text")
+      .attr("class", "legendTextAddRETD_MID lower")
+      .attr("x", x(75)-20)
+      .attr("y", y(-1000))
+      .text("and deductions")
+
+    function hideLabel(){
+      d3.selectAll(".legendTextAddRETD_MID")
+        .transition()
+        .attr("y", y(-1000))
+    }
+    function lowerLabel(){
+      d3.selectAll(".legendTextAddRETD_MID:not(.lower)")
+        .transition()
+        .attr("y", y(.028))
+      d3.selectAll(".legendTextAddRETD_MID.lower")
+        .transition()
+        .attr("y", y(.023))
+
+    }
+    function showLabel(){
+      d3.selectAll(".legendTextAddRETD_MID:not(.lower)")
+        .transition()
+        .attr("y", y(300))
+      d3.selectAll(".legendTextAddRETD_MID.lower")
+        .transition()
+        .attr("y", y(200))
+    }
+
+    d3.selectAll(".button").on("click", function(){
+      var next = d3.select(this).classed("next")
+      var prev = d3.select(this).classed("prev")
+
+      if(stepCount == 1 && next){
+        d3.select(".stepText.one").transition().style("opacity",0)
+        d3.select(".stepText.two").transition().style("opacity",1)
+        d3.select(".stepText.three").transition().style("opacity",0)
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+          .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
+        stepCount += 1;
+        greyNone();
+        showLabel();
+      }
+      else if(stepCount == 2 && prev){
+        d3.select(".stepText.one").transition().style("opacity",1)
+        d3.select(".stepText.two").transition().style("opacity",0)
+        d3.select(".stepText.three").transition().style("opacity",0)
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", height)
+          .attr("height", 0);
+        stepCount -= 1;      
+        greyPrev();
+        hideLabel();
+      }
+
+      else if(stepCount == 2 && next){
+        d3.select(".stepText.one").transition().style("opacity",0)
+        d3.select(".stepText.two").transition().style("opacity",0)
+        d3.select(".stepText.three").transition().style("opacity",1)
+        yAxis.ticks(10, "%");
+        y.domain([0,.1])
+         svg.select(".y.axis").transition().duration(700).call(yAxis);
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", function(d) { return y(d.percent_add_hs_add_retd_mid); })
+          .attr("height", function(d) { return height - y(d.percent_add_hs_add_retd_mid); });
+
+        d3.selectAll(".barAddHS").transition()
+          .attr("y", function(d) { return y(d.percent_add_hs); })
+          .attr("height", function(d) { return height - y(d.percent_add_hs); });
+        stepCount += 1;    
+        greyNext();
+        percentDisplay();
+        lowerLabel();
+      }
+      else if(stepCount == 3 && prev){
+        d3.select(".stepText.one").transition().style("opacity",0)
+        d3.select(".stepText.two").transition().style("opacity",1)
+        d3.select(".stepText.three").transition().style("opacity",0)
+        yAxis.ticks(10, "$,");
+        y.domain([0,1940])
+        svg.select(".y.axis").transition().duration(700).call(yAxis);
+
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+          .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
+
+        d3.selectAll(".barAddHS").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs); })
+          .attr("height", function(d) { return height - y(d.dollars_add_hs); });
+        stepCount -= 1;    
+        greyNone();
+        dollarDisplay();
+        showLabel();
+      }
+    })
+  });
+}
+drawGraphic();
+d3.select(window).on("resize", drawGraphic);
 
 </script>
