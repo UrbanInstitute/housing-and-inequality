@@ -62,9 +62,9 @@
 }
 .button{
   color: #ffffff;
-  background-color: #00a6d2;
+  background-color: #666666;
   display: inline-block;
-  width: 50px;
+  width: 20px;
   margin-top: 145px;
   padding: 3px;
   cursor: pointer;
@@ -76,14 +76,13 @@
   cursor: pointer;
 }
 .greyed, .greyed:hover{
-  color: #cccccc;
-  background-color: #e6e6e6;
-  background-color: grey;
+  color: #fff;
+  background-color: #e6e7e8;
   pointer-events: none;
   cursor: default;
 }
 .button:hover{
-  background-color: #FDBF11;
+  background-color: #333;
   color: #fff;
 }
 #stepCount{
@@ -102,19 +101,34 @@
   <p class = "stepText two">Adding in the mortgage interest and real estate tax deductions appears to dramatically increase inequality, however it is misleading to look at dollar differences in income cutoffs...</p>
   <p class = "stepText three">When we look at dollar differences as a percentage of income cutoffs, we see that the mortgage interest and real estate tax deductions only slightly increase inequality.</p>
   <div class = "button prev greyed"><</div>
+  <div class = "button one">1</div>
+  <div class = "button two greyed">2</div>
+  <div class = "button three greyed">3</div>
   <div class = "button next">></div>
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
 function greyPrev(){
-    d3.select(".button.prev").classed("greyed", true); d3.select(".button.next").classed("greyed", false)
+    d3.select(".button.prev").classed("greyed", true);
+    d3.select(".button.next").classed("greyed", false);
+    d3.select(".button.one").classed("greyed", false);
+    d3.select(".button.two").classed("greyed", true);
+    d3.select(".button.three").classed("greyed", true);
 }
 function greyNext(){
-  d3.select(".button.prev").classed("greyed", false); d3.select(".button.next").classed("greyed", true)
+  d3.select(".button.prev").classed("greyed", false);
+  d3.select(".button.next").classed("greyed", true);
+  d3.select(".button.one").classed("greyed", true);
+  d3.select(".button.two").classed("greyed", true);
+  d3.select(".button.three").classed("greyed", false);
 }
 function greyNone(){
-  d3.selectAll(".button").classed("greyed", false)
+  d3.select(".button.prev").classed("greyed", false);
+  d3.select(".button.next").classed("greyed", false);
+  d3.select(".button.one").classed("greyed", true);
+  d3.select(".button.two").classed("greyed", false);
+  d3.select(".button.three").classed("greyed", true);
 }
 function dollarDisplay(){
   d3.select(".yText")
@@ -252,18 +266,18 @@ function drawGraphic(){
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID")
       .attr("x", x(70))
-      .attr("y", y(-1000))
+      .attr("y", y(-2000))
       .text("Adding housing subsidies")
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID lower")
       .attr("x", x(75)-20)
-      .attr("y", y(-1000))
+      .attr("y", y(-2000))
       .text("and deductions")
 
     function hideLabel(){
       d3.selectAll(".legendTextAddRETD_MID")
         .transition()
-        .attr("y", y(-1000))
+        .attr("y", y(-2000))
     }
     function lowerLabel(){
       d3.selectAll(".legendTextAddRETD_MID:not(.lower)")
