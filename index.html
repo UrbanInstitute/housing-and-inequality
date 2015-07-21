@@ -2,7 +2,12 @@
 <meta charset="utf-8">
 <style>
 
+body{
+  margin: 0;
+}
+
 #chart{
+  position: relative;
   max-width: 950px;
   width: 100%;
 }
@@ -60,13 +65,25 @@
 #chartText{
   font: 16px Lato;
   height: 180px;
-  position: relative;
+  position: absolute;
   /* right: 0; */
-  bottom: -250px;
+  top: 25px;
   left: 52%;
   /* display: inline; */
   width: 350px;
   pointer-events: none;
+}
+#introText{
+  position: absolute;
+  font: 16px Lato;
+  height: 100%;
+  background: rgba(255,255,255,.9);
+  z-index: 3;
+  width: 100%;
+}
+#introText div.text{
+  margin: 10%;
+  line-height: 1.5em;
 }
 .button{
   color: #ffffff;
@@ -102,14 +119,61 @@
   opacity: 0;
   pointer-events: none;
 }
+
+.close span{
+     background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #00a6d2;
+    background-image: none;
+    background-origin: padding-box;
+    background-position: 0 0;
+    background-repeat: repeat;
+    background-size: auto auto;
+    font-weight: 500;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    text-align: center;
+    text-decoration-color: -moz-use-text-color;
+    text-decoration-line: none;
+    text-decoration-style: solid;
+    width: 155px;
+}
+
+
+.close :hover {
+  background: #00578b;
+  text-decoration: none;
+}
+
+.close span{
+ color:#fff;  
+      text-decoration: none;
+}
+
+.close{
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: table;
+  cursor: pointer;
+}
+
+
 </style>
 <body>
 
 <div id = "chart">
+  <div id = "introText">
+    <div class = "text">Housing policy can influence income inequality in many ways. At the most basic level, tax and transfer programs related to housing change the distribution of disposable income available to households. We examine the relationships between housing subsidies, the mortgage interest deduction and income inequality using calendar-year 2012 data from the March 2013 Current Population Survey (CPS) adjusted and augmented by the TRIM microsimulation model. To assess the impact of housing tax policy on the income distribution, we start by estimating the income distribution in a world in which people receive neither housing subsidies nor the mortgage interest deduction. From there, we add them back in one at a time.
+    <div class ="close"><span>View the graphic</span></div>
+    </div>
+  </div>
   <div id = "chartText">
-  <p class = "stepText one">This graph shows the dollar increase in income bracket cutoffs, when housing subsidies are added in. The income cutoffs on the lower portion of the distribution rise, while the cutoffs in higher percentiles remain stable. Housing subsidies reduce inequality.</p>
-  <p class = "stepText two">Adding in the mortgage interest and real estate tax deductions appears to dramatically increase inequality, however it is misleading to look at dollar differences in income cutoffs...</p>
-  <p class = "stepText three">When we look at dollar differences as a percentage of income cutoffs, we see that the mortgage interest and real estate tax deductions only slightly increase inequality.</p>
+  <p class = "stepText one">Housing subsidies reduce inequality. Those subsidies were primarily received by households in the bottom-half of the income distribution and were valued at about $36 billion in 2012.</p>
+  <p class = "stepText two">The mortgage interest deduction slightly increases inequality. When the value of mortgage interest deduction is added back in on top of the housing subsidies, incomes at the top of the distribution rise.</p>
+  <p class = "stepText three">On net, the reduction of inequality from housing subsidies outweighs the increase in inequality resulting from the mortgage interest deduction. This occurs because even though the total value of housing subsidies is about half that of the mortgage interest deduction, they accrue to low income households and represent a larger share of those households’ incomes than the mortgage interest deduction represents for higher income households.</p>
   <div class = "button prev greyed"><</div>
   <div class = "button one">1</div>
   <div class = "button two greyed">2</div>
@@ -117,6 +181,7 @@
   <div class = "button next">></div>
 </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
 var DOLLARS = d3.format("$")
@@ -296,7 +361,8 @@ function drawGraphic(){
         .attr("x", function(d) { return x(d.percentile); })
         .attr("width", x.rangeBand())
         .attr("y", height)
-        .attr("height", 0);
+        .attr("height", 0)
+        .style("pointer-events","none");
 
     // svg.append("text")
     //   .attr("class", "legendTextAddHS shadow")
@@ -368,6 +434,7 @@ function drawGraphic(){
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
         d3.selectAll(".barAddRETD_MID")
+          .style("pointer-events","visible")
           .on("mouseover", function(d){
             d3.select(this)
               .transition()
@@ -402,7 +469,9 @@ function drawGraphic(){
         d3.select(".stepText.one").transition().style("opacity",1)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",0)
-        d3.selectAll(".barAddRETD_MID").transition()
+        d3.selectAll(".barAddRETD_MID")
+          .style("pointer-events","none")
+          .transition()
           .attr("y", height)
           .attr("height", 0);
         stepCount -= 1;      
@@ -472,5 +541,23 @@ function drawGraphic(){
 }
 drawGraphic();
 d3.select(window).on("resize", drawGraphic);
+function hideIntro(){
+  d3.select("#introText")
+    .style("pointer-events","none")
+    .transition()
+    .style("opacity",0);
+}
 
+d3.select(".close")
+  .on("click", hideIntro);
+$(document).keyup(function(e) {
+     if (e.keyCode == 27) { // escape key maps to keycode `27`
+        hideIntro();
+    }
+});
 </script>
+
+
+
+
+
