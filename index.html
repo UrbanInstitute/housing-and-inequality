@@ -280,7 +280,7 @@ function drawGraphic(){
     if (error) throw error;
 
     x.domain(data.map(function(d) { return d.percentile; }));
-    y.domain([0, 1940]);
+    y.domain([0, 2000]);
 
 
 
@@ -524,7 +524,7 @@ function drawGraphic(){
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
         yAxis.ticks(10, "$,");
-        y.domain([0,1940])
+        y.domain([0,2000])
         svg.select(".y.axis").transition().duration(700).call(yAxis);
 
         d3.selectAll(".barAddRETD_MID").transition()
