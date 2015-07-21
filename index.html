@@ -90,7 +90,7 @@ body{
   background-color: #666666;
   display: inline-block;
   width: 20px;
-  margin-top: 145px;
+  margin-top: 215px;
   padding: 3px;
   cursor: pointer;
   font: 14px Lato;
@@ -120,6 +120,13 @@ body{
   pointer-events: none;
 }
 
+.stepText.one{
+  top: 100px;
+}
+
+.stepText.two{
+  top: 90px;
+}
 .close span{
      background-attachment: scroll;
     background-clip: border-box;
@@ -477,6 +484,8 @@ function drawGraphic(){
         stepCount -= 1;      
         greyPrev();
         hideLabel();
+        dollarDisplay();
+
       }
 
       else if(stepCount == 2 && next){
@@ -505,12 +514,10 @@ function drawGraphic(){
         greyNext();
         d3.select(".yText").transition().style("opacity",0)
         setTimeout(function(){
-          percentDisplay();
+            percentDisplay();
         },1900);
         lowerLabel();
-        d3.selectAll(".button")
-          .transition()
-          .style("margin-top", "215px")
+
       }
       else if(stepCount == 3 && prev){
         d3.select(".stepText.one").transition().style("opacity",0)
@@ -538,9 +545,6 @@ function drawGraphic(){
         greyNone();
         dollarDisplay();
         showLabel();
-        d3.selectAll(".button")
-          .transition()
-          .style("margin-top", "145px")
       }
     })
   });
