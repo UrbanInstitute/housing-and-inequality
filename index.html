@@ -548,6 +548,14 @@ function drawGraphic(){
       }
     })
   });
+  function checkState() {
+    if (stepCount == 3) {
+        setTimeout("checkState()", 300);
+    } else {
+        dollarDisplay();
+    }
+}
+checkState();
 }
 drawGraphic();
 d3.select(window).on("resize", drawGraphic);
