@@ -508,6 +508,9 @@ function drawGraphic(){
           percentDisplay();
         },1900);
         lowerLabel();
+        d3.selectAll(".button")
+          .transition()
+          .style("margin-top", "215px")
       }
       else if(stepCount == 3 && prev){
         d3.select(".stepText.one").transition().style("opacity",0)
@@ -535,6 +538,9 @@ function drawGraphic(){
         greyNone();
         dollarDisplay();
         showLabel();
+        d3.selectAll(".button")
+          .transition()
+          .style("margin-top", "145px")
       }
     })
   });
