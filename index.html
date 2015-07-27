@@ -68,7 +68,7 @@ body{
   position: absolute;
   /* right: 0; */
   top: 25px;
-  left: 52%;
+  left: 39%;
   /* display: inline; */
   width: 350px;
   pointer-events: none;
@@ -120,12 +120,22 @@ body{
   pointer-events: none;
 }
 
+.stepText span{
+  font-size: 18px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 7px;
+}
 .stepText.one{
-  top: 100px;
+  top: 60px;
 }
 
 .stepText.two{
-  top: 90px;
+  top: 25px;
+}
+
+.stepText.three{
+  width: 120%;
 }
 .close span{
      background-attachment: scroll;
@@ -178,9 +188,12 @@ body{
     </div>
   </div>
   <div id = "chartText">
-  <p class = "stepText one">Housing subsidies reduce inequality. Those subsidies were primarily received by households in the bottom-half of the income distribution and were valued at about $36 billion in 2012.</p>
-  <p class = "stepText two">The mortgage interest deduction slightly increases inequality. When the value of mortgage interest deduction is added back in on top of the housing subsidies, incomes at the top of the distribution rise.</p>
-  <p class = "stepText three">On net, the reduction of inequality from housing subsidies outweighs the increase in inequality resulting from the mortgage interest deduction. This occurs because even though the total value of housing subsidies is about half that of the mortgage interest deduction, they accrue to low income households and represent a larger share of those households’ incomes than the mortgage interest deduction represents for higher income households.</p>
+  <p class = "stepText one"><span>Dollar change in incomes that include housing subsidies
+</span>Housing subsidies reduce inequality. Those subsidies were primarily received by households in the bottom-half of the income distribution and were valued at about $36 billion in 2012.</p>
+  <p class = "stepText two"><span>Dollar change in incomes that include housing subsidies and the mortgage interest deduction
+</span>The mortgage interest deduction slightly increases inequality. When the value of mortgage interest deduction is added back in on top of the housing subsidies, incomes at the top of the distribution rise.</p>
+  <p class = "stepText three"><span>Percent change in incomes under both scenarios
+</span>On net, the reduction of inequality from housing subsidies outweighs the increase in inequality resulting from the mortgage interest deduction. This occurs because even though the total value of housing subsidies is about half that of the mortgage interest deduction, they accrue to low income households and represent a larger share of those households’ incomes than the mortgage interest deduction represents for higher income households.</p>
   <div class = "button prev greyed"><</div>
   <div class = "button one">1</div>
   <div class = "button two greyed">2</div>
@@ -405,9 +418,9 @@ function drawGraphic(){
       .text("Adding housing subsidies")
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID lower")
-      .attr("x", x(75)-20)
+      .attr("x", x(65)+10)
       .attr("y", y(-2000))
-      .text("and deductions")
+      .text("and the mortgage interest deduction")
 
     function hideLabel(){
       d3.selectAll(".legendTextAddRETD_MID")
@@ -496,14 +509,16 @@ function drawGraphic(){
         yAxis.ticks(10, "%");
         y.domain([0,.1])
          svg.select(".y.axis").transition().duration(1700).call(yAxis);
-        d3.selectAll(".barAddRETD_MID").transition()
+        d3.selectAll(".barAddRETD_MID")
+          .transition()
           .attr("y", function(d) { return y(d.percent_add_hs_add_retd_mid); })
           .attr("height", function(d) { return height - y(d.percent_add_hs_add_retd_mid); });
         d3.selectAll(".textAddRETD_MID")
           .attr("y", function(d){ return y(d.percent_add_hs_add_retd_mid) })
           .text(function(d){ return PERCENT(d.percent_add_hs_add_retd_mid)})
 
-        d3.selectAll(".barAddHS").transition()
+        d3.selectAll(".barAddHS")
+          .transition()
           .attr("y", function(d) { return y(d.percent_add_hs); })
           .attr("height", function(d) { return height - y(d.percent_add_hs); });
         d3.selectAll(".textAddHS")
