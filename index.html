@@ -1,14 +1,30 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-
+@media only screen and (max-width: 690px) and (min-width: 100px) {
+  #mobileDetect{
+    display: block !important;
+  }
+  .legendTextAddRETD_MID, .legendTextAddHS{
+    display: none;
+  }
+  #chartText{
+    top: 370px !important;
+    left: 12px !important;
+    width: 350px !important;
+  }
+}
+#mobileDetect{
+  display: none;
+}
 body{
   margin: 0;
 }
 
 #chart{
   position: relative;
-  max-width: 950px;
+  max-width: 690px;
   width: 100%;
 }
 .barAddRETD_MID, .legendAddRETD_MID, .underlineRETD_MID {
@@ -67,15 +83,15 @@ body{
 
 
 #chartText{
-  font: 16px Lato;
-  height: 180px;
-  position: absolute;
-  /* right: 0; */
-  top: 25px;
-  left: 29%;
-  /* display: inline; */
-  width: 350px;
-  pointer-events: none;
+    font: 16px Lato;
+    height: 180px;
+    position: absolute;
+    /* right: 0; */
+    top: 0px;
+    left: 24%;
+    /* display: inline; */
+    width: 350px;
+    pointer-events: none;
 }
 #introText{
   position: absolute;
@@ -188,7 +204,7 @@ body{
 
 </style>
 <body>
-
+<span id ="mobileDetect"></span>
 <div id = "chart">
   </div>
   <div id = "chartText">
@@ -213,6 +229,7 @@ body{
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src = "js/pym.min.js"></script>
 <script>
 var DOLLARS = d3.format("$")
 var PERCENT = d3.format(".1%")
@@ -252,7 +269,7 @@ function stepFour(){
 }
 function dollarDisplay(){
   d3.select(".yText")
-  .text("Increase in income");  
+  .text("Increase in income");
 }
 function percentDisplay(){
   d3.select(".yText")
@@ -262,7 +279,8 @@ function percentDisplay(){
 }
 
 
-function drawGraphic(){
+function drawGraphic(container_width){
+  var isMobile = (d3.select("#mobileDetect").style("display") == "block")
   d3.select(".stepText.one").style("opacity",1);
   d3.select(".stepText.two").style("opacity",0);
   d3.select(".stepText.three").style("opacity",0);
@@ -271,8 +289,8 @@ function drawGraphic(){
   d3.select("#chart svg").remove();
   var stepCount = 1;
   var margin = {top: 40, right: 20, bottom: 80, left: 60};
-  var width = d3.select("#chart").node().getBoundingClientRect().width - margin.left - margin.right;
-  var height = width * .4;
+  var width = (container_width - margin.left - margin.right > 610) ? 690:container_width - margin.left - margin.right;
+  var height = (isMobile) ? 300 : width * .4;
       // width = 960 - margin.left - margin.right,
       // height = 500 - margin.top - margin.bottom;
 
@@ -284,7 +302,7 @@ function drawGraphic(){
 
   var xAxis = d3.svg.axis()
       .scale(x)
-      .orient("bottom");
+      .orient("bottom")
 
   var yAxis = d3.svg.axis()
       .scale(y)
@@ -444,12 +462,12 @@ function drawGraphic(){
 
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID")
-      .attr("x", x(70)+2)
+      .attr("x", x(60)+2)
       .attr("y", y(-2000))
       .text("Adding mortgage interest and real estate")
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID lower")
-      .attr("x", x(70)+2)
+      .attr("x", x(60)+2)
       .attr("y", y(-2000))
       .text("tax deductions on top of housing subsidies")
 
@@ -470,17 +488,15 @@ function drawGraphic(){
     function showLabel(){
       d3.selectAll(".legendTextAddRETD_MID:not(.lower)")
         .transition()
-        .attr("y", y(300))
+        .attr("y", y(240))
       d3.selectAll(".legendTextAddRETD_MID.lower")
         .transition()
-        .attr("y", y(200))
+        .attr("y", y(140))
     }
 
     d3.selectAll(".button").on("click", function(){
       var next = d3.select(this).classed("next")
       var prev = d3.select(this).classed("prev")
-
-      console.log(stepCount, next, prev)
 
       if(stepCount == 1 && next){
         d3.select(".stepText.one").transition().style("opacity",0)
@@ -572,7 +588,8 @@ function drawGraphic(){
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",0)
         d3.select(".stepText.four").transition().style("opacity",1)
-        yAxis.ticks(10, "%");
+        if(isMobile){ yAxis.ticks(4, "%");}
+        else{ yAxis.ticks(10, "%"); }
         y.domain([0,.1])
          svg.select(".y.axis").transition().duration(1700).call(yAxis);
         d3.selectAll(".barAddRETD_MID")
@@ -601,7 +618,7 @@ function drawGraphic(){
         setTimeout(function(){
             percentDisplay();
         },1900);
-        lowerLabel();
+        // lowerLabel();
 
       }
       else if(stepCount == 3 && prev){
@@ -639,7 +656,8 @@ function drawGraphic(){
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",1)
         d3.select(".stepText.four").transition().style("opacity",0)
-        yAxis.ticks(10, "$,");
+        if(isMobile){ yAxis.ticks(4, "$,");}
+        else{ yAxis.ticks(10, "$,"); }
         y.domain([0,2000])
         svg.select(".y.axis").transition().duration(700).call(yAxis);
 
@@ -668,19 +686,39 @@ function drawGraphic(){
         dollarDisplay();
         showLabel();
       }
+
     })
   });
+setTimeout(function(){
+        if(isMobile){
+          d3.select("body").style("height","620px")
+          yAxis.ticks(4, "$,");
+          d3.select(".y.axis").call(yAxis)
+          d3.selectAll(".x.axis .tick text")
+            .style("display", function(){
+              if (parseFloat(d3.select(this).text()) % 10 == 0){
+                return "none"
+              } else{ return "block"}
+            })
+        }
+        else{
+          d3.select("body").style("height","400px")
+        }
+        pymChild.sendHeight();
+}, 100);
   function checkState() {
     if (stepCount == 4) {
         setTimeout("checkState()", 300);
     } else {
         dollarDisplay();
     }
+
 }
 checkState();
 }
 drawGraphic();
-d3.select(window).on("resize", drawGraphic);
+var pymChild = new pym.Child({ renderCallback: drawGraphic });
+// d3.select(window).on("resize", drawGraphic);
 
 </script>
 
