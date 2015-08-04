@@ -11,11 +11,11 @@ body{
   max-width: 950px;
   width: 100%;
 }
-.barAddRETD_MID, .legendAddRETD_MID {
+.barAddRETD_MID, .legendAddRETD_MID, .underlineRETD_MID {
   fill: #1696d2;
   opacity: .7;
 }
-.barAddHS, .legendAddHS{
+.barAddHS, .legendAddHS, .underlineHS{
   fill: #fcb918;
   opacity: .7;
 }
@@ -61,6 +61,10 @@ body{
   pointer-events: none;
 }
 
+.textAddHS{
+  background-color: yellow;
+}
+
 
 #chartText{
   font: 16px Lato;
@@ -68,7 +72,7 @@ body{
   position: absolute;
   /* right: 0; */
   top: 25px;
-  left: 39%;
+  left: 29%;
   /* display: inline; */
   width: 350px;
   pointer-events: none;
@@ -127,15 +131,19 @@ body{
   margin-bottom: 7px;
 }
 .stepText.one{
-  top: 60px;
+  top: 45px;
 }
 
 .stepText.two{
-  top: 25px;
+  top: 83px;
 }
 
 .stepText.three{
-  width: 120%;
+  top: 20px;
+  width: 88%;
+}
+.stepText.four{
+  top: -16px;
 }
 .close span{
      background-attachment: scroll;
@@ -182,23 +190,25 @@ body{
 <body>
 
 <div id = "chart">
-  <div id = "introText">
-    <div class = "text">Housing policy can influence income inequality in many ways. At the most basic level, tax and transfer programs related to housing change the distribution of disposable income available to households. We examine the relationships between housing subsidies, the mortgage interest deduction and income inequality using calendar-year 2012 data from the March 2013 Current Population Survey (CPS) adjusted and augmented by the TRIM microsimulation model. To assess the impact of housing tax policy on the income distribution, we start by estimating the income distribution in a world in which people receive neither housing subsidies nor the mortgage interest deduction. From there, we add them back in one at a time.
-    <div class ="close"><span>View the graphic</span></div>
-    </div>
   </div>
   <div id = "chartText">
-  <p class = "stepText one"><span>Dollar change in incomes that include housing subsidies
-</span>Housing subsidies reduce inequality. Those subsidies were primarily received by households in the bottom-half of the income distribution and were valued at about $36 billion in 2012.</p>
-  <p class = "stepText two"><span>Dollar change in incomes that include housing subsidies and the mortgage interest deduction
-</span>The mortgage interest deduction slightly increases inequality. When the value of mortgage interest deduction is added back in on top of the housing subsidies, incomes at the top of the distribution rise.</p>
-  <p class = "stepText three"><span>Percent change in incomes under both scenarios
-</span>On net, the reduction of inequality from housing subsidies outweighs the increase in inequality resulting from the mortgage interest deduction. This occurs because even though the total value of housing subsidies is about half that of the mortgage interest deduction, they accrue to low income households and represent a larger share of those households’ incomes than the mortgage interest deduction represents for higher income households.</p>
-  <div class = "button prev greyed"><</div>
+  <p class = "stepText one"><span>Baseline income distribution
+</span>We start by looking at the distribution of post-tax, post-transfer income without housing subsidies and deductions, dividing the population into twenty equal groups.
+<br/>
+ Now let’s look at what happens when we add in housing subsidies&hellip;
+</p>
+  <p class = "stepText two"><span>Adding in housing subsidies reduces inequality
+</span>Housing subsidies totaled $36 billion in 2012.  Incomes increased most for households with the lowest incomes.</p>
+  <p class = "stepText three"><span>Adding in the mortgage interest and real estate tax deductions slightly increases inequality.
+</span>When the value of the mortgage interest deduction ($70 billion) and real estate tax deduction ($28.2 billion) are added back in on top of housing subsidies, incomes at the top of the distribution rise.</p>
+  <p class = "stepText four"><span>Housing subsidies offset the inequality brought about by housing deductions despite a third of the funding.
+</span>Even though the total value of housing subsidies is slightly more than a third of the value of the mortgage interest and real estate tax deductions, housing subsidies accrue to low-income households and represent a larger share of those households’ incomes than the deductions represent for higher income households.</p>
+  <div class = "button prev greyed">&lt;</div>
   <div class = "button one">1</div>
   <div class = "button two greyed">2</div>
   <div class = "button three greyed">3</div>
-  <div class = "button next">></div>
+  <div class = "button four greyed">4</div>
+  <div class = "button next">&gt;</div>
 </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -207,36 +217,48 @@ body{
 var DOLLARS = d3.format("$")
 var PERCENT = d3.format(".1%")
 
-function greyPrev(){
+function stepOne(){
     d3.select(".button.prev").classed("greyed", true);
     d3.select(".button.next").classed("greyed", false);
     d3.select(".button.one").classed("greyed", false);
     d3.select(".button.two").classed("greyed", true);
     d3.select(".button.three").classed("greyed", true);
+    d3.select(".button.four").classed("greyed", true);
+
 }
-function greyNext(){
-  d3.select(".button.prev").classed("greyed", false);
-  d3.select(".button.next").classed("greyed", true);
-  d3.select(".button.one").classed("greyed", true);
-  d3.select(".button.two").classed("greyed", true);
-  d3.select(".button.three").classed("greyed", false);
+function stepTwo(){
+    d3.select(".button.prev").classed("greyed", false);
+    d3.select(".button.next").classed("greyed", false);
+    d3.select(".button.one").classed("greyed", true);
+    d3.select(".button.two").classed("greyed", false);
+    d3.select(".button.three").classed("greyed", true);
+    d3.select(".button.four").classed("greyed", true);
 }
-function greyNone(){
-  d3.select(".button.prev").classed("greyed", false);
-  d3.select(".button.next").classed("greyed", false);
-  d3.select(".button.one").classed("greyed", true);
-  d3.select(".button.two").classed("greyed", false);
-  d3.select(".button.three").classed("greyed", true);
+function stepThree(){
+    d3.select(".button.prev").classed("greyed", false);
+    d3.select(".button.next").classed("greyed", false);
+    d3.select(".button.one").classed("greyed", true);
+    d3.select(".button.two").classed("greyed", true);
+    d3.select(".button.three").classed("greyed", false);
+    d3.select(".button.four").classed("greyed", true);
+}
+function stepFour(){
+    d3.select(".button.prev").classed("greyed", false);
+    d3.select(".button.next").classed("greyed", true);
+    d3.select(".button.one").classed("greyed", true);
+    d3.select(".button.two").classed("greyed", true);
+    d3.select(".button.three").classed("greyed", true);
+    d3.select(".button.four").classed("greyed", false);
 }
 function dollarDisplay(){
   d3.select(".yText")
-  .text("Dollar difference");  
+  .text("Increase in income");  
 }
 function percentDisplay(){
   d3.select(".yText")
   .transition()
   .style("opacity",1)
-  .text("Percent difference");  
+  .text("Percent change in income");  
 }
 
 
@@ -244,7 +266,7 @@ function drawGraphic(){
   d3.select(".stepText.one").style("opacity",1);
   d3.select(".stepText.two").style("opacity",0);
   d3.select(".stepText.three").style("opacity",0);
-  greyPrev();
+  stepOne();
 
   d3.select("#chart svg").remove();
   var stepCount = 1;
@@ -315,20 +337,31 @@ function drawGraphic(){
     svg.append("text")
       .attr("class", "xText")
       .attr("y", 400)
-      .attr("x", 420)
-      .text("Percentile")
+      .attr("x", x(40))
+      .text("Household Income Percentile")
 
-    svg.selectAll(".textAddHS ")
+    var gBottom = svg.selectAll(".textAddHS ")
         .data(data)
-      .enter().append("text")
+      .enter().append("g")
+      .attr("class", function(d){ return "textAddHS d" + d.percentile })
+      .style("opacity",0);
+
+      gBottom.append("text")
         .attr("class", function(d){ return "textAddHS d" + d.percentile})
         .attr("x", function(d) { return x(d.percentile); })
-        .attr("y", function(d) { return y(d.dollars_add_hs); })
+        .attr("y", function(d) { return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid)})
         .attr("dx", x.rangeBand()/2)
         .style("text-anchor", "middle")
         .attr("dy", "-.71em")
         .text(function(d){ return DOLLARS(d.dollars_add_hs)})
-        .style("opacity", 0)
+
+      gBottom.append("rect")
+        .attr("class", "underlineHS")
+        .attr("x",function(d) { return x(d.percentile) +5;})
+        .attr("y",function(d) { return -10 + y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid);})
+        .attr("width", x.rangeBand() -10)
+        .attr("height",3)
+        
 
     svg.selectAll(".barAddHS")
         .data(data)
@@ -336,14 +369,18 @@ function drawGraphic(){
         .attr("class", "barAddHS")
         .attr("x", function(d) { return x(d.percentile); })
         .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.dollars_add_hs); })
-        .attr("height", function(d) { return height - y(d.dollars_add_hs); })
+        .attr("y", height)
+        .attr("height", 0)
         .on("mouseover", function(d){
           d3.select(this)
             .transition()
             .duration(300)
             .style("opacity", .9)
           d3.select(".textAddHS.d" + d.percentile)
+            .transition()
+            .duration(300)
+            .style("opacity",1)
+          d3.select(".textAddRETD_MID.d" + d.percentile)
             .transition()
             .duration(300)
             .style("opacity",1)
@@ -358,20 +395,35 @@ function drawGraphic(){
             .transition()
             .duration(300)
             .style("opacity",0)
+          d3.select(".textAddRETD_MID.d" + d.percentile)
+            .transition()
+            .duration(300)
+            .style("opacity",0)
         })
 
 
-    svg.selectAll(".textAddRETD_MID ")
+    var gTop = svg.selectAll(".textAddRETD_MID")
         .data(data)
-      .enter().append("text")
-        .attr("class", function(d){ return "textAddRETD_MID d" + d.percentile})
+        .enter().append("g")
+        .attr("class",function(d){ return "textAddRETD_MID d" + d.percentile})
+        .style("opacity", 0)
+        .style("display","none")
+
+      gTop.append("text")
+        .attr("class", function(d){ return "d" + d.percentile})
         .attr("x", function(d) { return x(d.percentile); })
-        .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+        .attr("y", function(d) { return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid); })
         .attr("dx", x.rangeBand()/2)
         .style("text-anchor", "middle")
-        .attr("dy", "-.71em")
+        .attr("dy", "-2.71em")
         .text(function(d){ return DOLLARS(d.dollars_add_hs_add_retd_mid)})
-        .style("opacity", 0)
+
+      gTop.append("rect")
+        .attr("class", "underlineRETD_MID")
+        .attr("x",function(d) { return x(d.percentile) +5;})
+        .attr("y",function(d) { return -40 + y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid);})
+        .attr("width", x.rangeBand() -10)
+        .attr("height",3)
 
     
     svg.selectAll(".barAddRETD_MID")
@@ -380,47 +432,26 @@ function drawGraphic(){
         .attr("class", "barAddRETD_MID")
         .attr("x", function(d) { return x(d.percentile); })
         .attr("width", x.rangeBand())
-        .attr("y", height)
+        .attr("y", function(d){return y(d.dollars_add_hs)})
         .attr("height", 0)
         .style("pointer-events","none");
 
-    // svg.append("text")
-    //   .attr("class", "legendTextAddHS shadow")
-    //   .style("filter", "url(#shadow)")
-    //   .attr("x", x(15)-40)
-    //   .attr("y", y(250))
-    //   .text("Adding housing subsidies")
     svg.append("text")
       .attr("class", "legendTextAddHS")
       .attr("x", x(15)-40)
-      .attr("y", y(250))
+      .attr("y", y(-2000))
       .text("Adding housing subsidies")
-
-
-
-    // svg.append("text")
-    //   .attr("class", "legendTextAddRETD_MID shadow")
-    //   .style("filter", "url(#shadow)")
-    //   .attr("x", x(70))
-    //   .attr("y", y(-1000))
-    //   .text("Adding housing subsidies")
-    // svg.append("text")
-    //   .attr("class", "legendTextAddRETD_MID shadow lower")
-    //   .style("filter", "url(#shadow)")
-    //   .attr("x", x(75)-20)
-    //   .attr("y", y(-1000))
-    //   .text("and deductions")
 
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID")
-      .attr("x", x(70))
+      .attr("x", x(70)+2)
       .attr("y", y(-2000))
-      .text("Adding housing subsidies")
+      .text("Adding mortgage interest and real estate")
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID lower")
-      .attr("x", x(65)+10)
+      .attr("x", x(70)+2)
       .attr("y", y(-2000))
-      .text("and the mortgage interest deduction")
+      .text("tax deductions on top of housing subsidies")
 
     function hideLabel(){
       d3.selectAll(".legendTextAddRETD_MID")
@@ -449,10 +480,34 @@ function drawGraphic(){
       var next = d3.select(this).classed("next")
       var prev = d3.select(this).classed("prev")
 
+      console.log(stepCount, next, prev)
+
       if(stepCount == 1 && next){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
+        d3.select(".stepText.four").transition().style("opacity",0)
+        d3.select(".legendTextAddHS")
+          .transition()
+          .attr("y", y(300))
+        d3.selectAll(".barAddHS")
+            .transition()
+            .attr("y", function(d) { return y(d.dollars_add_hs); })
+            .attr("height", function(d){ return height - y(d.dollars_add_hs);})
+
+
+        
+        stepTwo();
+        stepCount += 1;
+      }
+
+      else if(stepCount == 2 && next){
+        d3.select(".stepText.one").transition().style("opacity",0)
+        d3.select(".stepText.two").transition().style("opacity",0)
+        d3.select(".stepText.three").transition().style("opacity",1)
+        d3.select(".stepText.four").transition().style("opacity",0)
+        d3.selectAll(".textAddRETD_MID")
+          .style("display","block")
         d3.selectAll(".barAddRETD_MID")
           .style("pointer-events","visible")
           .on("mouseover", function(d){
@@ -464,6 +519,10 @@ function drawGraphic(){
               .transition()
               .duration(300)
               .style("opacity",1)
+          d3.select(".textAddHS.d" + d.percentile)
+            .transition()
+            .duration(300)
+            .style("opacity",1)
           })
           .on("mouseout", function(d){
             d3.select(this)
@@ -475,58 +534,69 @@ function drawGraphic(){
               .transition()
               .duration(300)
               .style("opacity",0)
+            d3.select(".textAddHS.d" + d.percentile)
+              .transition()
+              .duration(300)
+              .style("opacity",0)
           })
           .transition()
-          .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
+          .attr("y", function(d) { return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid); })
           .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
 
 
         stepCount += 1;
-        greyNone();
+        stepThree();
         showLabel();
       }
       else if(stepCount == 2 && prev){
         d3.select(".stepText.one").transition().style("opacity",1)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",0)
-        d3.selectAll(".barAddRETD_MID")
-          .style("pointer-events","none")
+        d3.select(".stepText.four").transition().style("opacity",0)
+        d3.select(".legendTextAddHS")
+          .transition()
+          .attr("y", y(-2000))
+        d3.selectAll(".barAddHS")
           .transition()
           .attr("y", height)
           .attr("height", 0);
         stepCount -= 1;      
-        greyPrev();
+        stepOne();
         hideLabel();
         dollarDisplay();
 
       }
 
-      else if(stepCount == 2 && next){
-        d3.select
+      else if(stepCount == 3 && next){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",0)
-        d3.select(".stepText.three").transition().style("opacity",1)
+        d3.select(".stepText.three").transition().style("opacity",0)
+        d3.select(".stepText.four").transition().style("opacity",1)
         yAxis.ticks(10, "%");
         y.domain([0,.1])
          svg.select(".y.axis").transition().duration(1700).call(yAxis);
         d3.selectAll(".barAddRETD_MID")
           .transition()
-          .attr("y", function(d) { return y(d.percent_add_hs_add_retd_mid); })
+          .attr("y", function(d) { return y(d.percent_add_hs) - height + y(d.percent_add_hs_add_retd_mid); })
           .attr("height", function(d) { return height - y(d.percent_add_hs_add_retd_mid); });
-        d3.selectAll(".textAddRETD_MID")
-          .attr("y", function(d){ return y(d.percent_add_hs_add_retd_mid) })
+
+        d3.selectAll(".textAddRETD_MID text")
+          .attr("y", function(d){ return y(d.percent_add_hs_add_retd_mid) - height + y(d.percent_add_hs) })
           .text(function(d){ return PERCENT(d.percent_add_hs_add_retd_mid)})
+        d3.selectAll(".underlineRETD_MID")
+        .attr("y",function(d) { return -40 + y(d.percent_add_hs) - height + y(d.percent_add_hs_add_retd_mid);})
 
         d3.selectAll(".barAddHS")
           .transition()
           .attr("y", function(d) { return y(d.percent_add_hs); })
           .attr("height", function(d) { return height - y(d.percent_add_hs); });
-        d3.selectAll(".textAddHS")
-          .attr("y", function(d){ return y(d.percent_add_hs) })
+        d3.selectAll(".textAddHS text")
+          .attr("y", function(d){ return y(d.percent_add_hs) - height + y(d.percent_add_hs_add_retd_mid) })
           .text(function(d){ return PERCENT(d.percent_add_hs)})
-
+        d3.selectAll(".underlineHS")
+          .attr("y",function(d) { return -10 + y(d.percent_add_hs) - height + y(d.percent_add_hs_add_retd_mid);})
         stepCount += 1;    
-        greyNext();
+        stepFour();
         d3.select(".yText").transition().style("opacity",0)
         setTimeout(function(){
             percentDisplay();
@@ -538,33 +608,70 @@ function drawGraphic(){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
+        d3.select(".stepText.four").transition().style("opacity",0)
         yAxis.ticks(10, "$,");
         y.domain([0,2000])
         svg.select(".y.axis").transition().duration(700).call(yAxis);
-
-        d3.selectAll(".barAddRETD_MID").transition()
-          .attr("y", function(d) { return y(d.dollars_add_hs_add_retd_mid); })
-          .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
         d3.selectAll(".textAddRETD_MID")
-          .attr("y", function(d){ return y(d.dollars_add_hs_add_retd_mid) })
+          .style("display","none")
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs) })
+          .attr("height", 0);
+        d3.selectAll(".textAddRETD_MID text")
+          .attr("y", function(d){ return y(d.dollars_add_hs_add_retd_mid) - height + y(d.dollars_add_hs)})
           .text(function(d){ return DOLLARS(d.dollars_add_hs_add_retd_mid)})
 
         d3.selectAll(".barAddHS").transition()
           .attr("y", function(d) { return y(d.dollars_add_hs); })
           .attr("height", function(d) { return height - y(d.dollars_add_hs); });
-        d3.selectAll(".textAddHS")
-          .attr("y", function(d){ return y(d.dollars_add_hs) })
+        d3.selectAll(".textAddHS text")
+          .attr("y", function(d){ return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid)})
           .text(function(d){ return DOLLARS(d.dollars_add_hs)})
 
         stepCount -= 1;    
-        greyNone();
+        stepTwo();
+        dollarDisplay();
+        showLabel();
+
+      }
+      else if(stepCount == 4 && prev){
+        d3.select(".stepText.one").transition().style("opacity",0)
+        d3.select(".stepText.two").transition().style("opacity",0)
+        d3.select(".stepText.three").transition().style("opacity",1)
+        d3.select(".stepText.four").transition().style("opacity",0)
+        yAxis.ticks(10, "$,");
+        y.domain([0,2000])
+        svg.select(".y.axis").transition().duration(700).call(yAxis);
+
+        d3.selectAll(".barAddRETD_MID").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid); })
+          .attr("height", function(d) { return height - y(d.dollars_add_hs_add_retd_mid); });
+        d3.selectAll(".textAddRETD_MID text")
+          .attr("y", function(d){ return y(d.dollars_add_hs_add_retd_mid) - height + y(d.dollars_add_hs)})
+          .text(function(d){ return DOLLARS(d.dollars_add_hs_add_retd_mid)})
+        d3.selectAll(".underlineRETD_MID")
+          .attr("y",function(d) { return -40 + y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid);})
+
+
+        d3.selectAll(".barAddHS").transition()
+          .attr("y", function(d) { return y(d.dollars_add_hs); })
+          .attr("height", function(d) { return height - y(d.dollars_add_hs); });
+        d3.selectAll(".textAddHS text")
+          .attr("y", function(d){ return y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid)})
+          .text(function(d){ return DOLLARS(d.dollars_add_hs)})
+        d3.selectAll(".underlineHS")
+          .attr("y",function(d) { return -10 + y(d.dollars_add_hs) - height + y(d.dollars_add_hs_add_retd_mid);})
+
+
+        stepCount -= 1;    
+        stepThree();
         dollarDisplay();
         showLabel();
       }
     })
   });
   function checkState() {
-    if (stepCount == 3) {
+    if (stepCount == 4) {
         setTimeout("checkState()", 300);
     } else {
         dollarDisplay();
@@ -574,20 +681,7 @@ checkState();
 }
 drawGraphic();
 d3.select(window).on("resize", drawGraphic);
-function hideIntro(){
-  d3.select("#introText")
-    .style("pointer-events","none")
-    .transition()
-    .style("opacity",0);
-}
 
-d3.select(".close")
-  .on("click", hideIntro);
-$(document).keyup(function(e) {
-     if (e.keyCode == 27) { // escape key maps to keycode `27`
-        hideIntro();
-    }
-});
 </script>
 
 
