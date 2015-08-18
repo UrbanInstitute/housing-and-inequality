@@ -124,8 +124,8 @@ body{
 }
 .greyed, .greyed:hover{
   color: #fff;
-  background-color: #e6e7e8;
-  pointer-events: none;
+  background-color: #e6e7e8 !important;
+  /*pointer-events: none;*/
   cursor: default;
 }
 .button:hover{
@@ -214,12 +214,9 @@ body{
 <div id = "chart">
   </div>
   <div id = "chartText">
-  <p class = "stepText one"><span>Baseline income distribution
-</span>We start by looking at the distribution of post-tax, post-transfer income without housing subsidies and deductions, dividing the population into twenty equal groups.
-<br/>
- Now let’s look at what happens when we add in housing subsidies&hellip;
+  <p class = "stepText one">We start with post-tax, post-transfer income (adjusted for household size) and take out housing subsidies and deductions. We divide the households into twenty equal groups and show the adjusted income levels at the cutoff point for each group.<br/><br/>Next, let’s see who gets housing subsidies&hellip;
 </p>
-  <p class = "stepText two"><span>Adding in housing subsidies reduces inequality
+  <p class = "stepText two"><span>Housing subsidies reduce inequality
 </span>Housing subsidies totaled $36 billion in 2012.  Incomes increased most for households with the lowest incomes.</p>
   <p class = "stepText three"><span>Adding in the mortgage interest and real estate tax deductions slightly increases inequality.
 </span>When the value of the mortgage interest deduction ($70 billion) and real estate tax deduction ($28.2 billion) are added back in on top of housing subsidies, incomes at the top of the distribution rise.</p>
@@ -474,18 +471,18 @@ function drawGraphic(container_width){
       .attr("class", "legendTextAddHS")
       .attr("x", x(15)-40)
       .attr("y", y(-200000))
-      .text("Adding housing subsidies")
+      .text("Housing subsidies")
 
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID")
       .attr("x", x(60)+2)
       .attr("y", y(-200000))
-      .text("Adding mortgage interest and real estate")
+      .text("Mortgage interest and real estate tax")
     svg.append("text")
       .attr("class", "legendTextAddRETD_MID lower")
       .attr("x", x(60)+2)
       .attr("y", y(-200000))
-      .text("tax deductions on top of housing subsidies")
+      .text("deductions on top of housing subsidies")
 
     function hideLabel(){
       d3.selectAll(".legendTextAddRETD_MID")
@@ -513,8 +510,12 @@ function drawGraphic(container_width){
     d3.selectAll(".button").on("click", function(){
       var next = d3.select(this).classed("next")
       var prev = d3.select(this).classed("prev")
+      var one = d3.select(this).classed("one")
+      var two = d3.select(this).classed("two")
+      var three = d3.select(this).classed("three")
+      var four = d3.select(this).classed("four")
 
-      if(stepCount == 1 && next){
+      if(stepCount == 1 && next || stepCount == 1 && two){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
@@ -539,7 +540,7 @@ function drawGraphic(container_width){
         stepCount += 1;
       }
 
-      else if(stepCount == 2 && next){
+      else if(stepCount == 2 && next || stepCount == 2 && three){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",1)
@@ -586,7 +587,7 @@ function drawGraphic(container_width){
         stepThree();
         showLabel();
       }
-      else if(stepCount == 2 && prev){
+      else if(stepCount == 2 && prev || stepCount == 2 && one){
         d3.select(".stepText.one").transition().style("opacity",1)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",0)
@@ -609,7 +610,7 @@ function drawGraphic(container_width){
 
       }
 
-      else if(stepCount == 3 && next){
+      else if(stepCount == 3 && next || stepCount == 3 && four){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",0)
@@ -647,7 +648,7 @@ function drawGraphic(container_width){
         // lowerLabel();
 
       }
-      else if(stepCount == 3 && prev){
+      else if(stepCount == 3 && prev || stepCount == 3 && two){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",1)
         d3.select(".stepText.three").transition().style("opacity",0)
@@ -677,7 +678,7 @@ function drawGraphic(container_width){
         hideLabel();
 
       }
-      else if(stepCount == 4 && prev){
+      else if(stepCount == 4 && prev || stepCount == 4 && three){
         d3.select(".stepText.one").transition().style("opacity",0)
         d3.select(".stepText.two").transition().style("opacity",0)
         d3.select(".stepText.three").transition().style("opacity",1)
